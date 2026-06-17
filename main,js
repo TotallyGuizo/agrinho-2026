@@ -1,0 +1,85 @@
+/**
+ * PROJETO AGRINHO 2026 - SISTEMA DE AUTOMAÇÃO E SUSTENTABILIDADE
+ * Script de Interatividade Avançada e Performance Visual
+ */
+
+document.addEventListener('DOMContentLoaded', () => {
+    initHeaderScroll();
+    initSmoothScroll();
+    initScrollAnimation();
+});
+
+/**
+ * 1. CONTROLE DO CABEÇALHO (Efeito Blur/Sombra ao Rolar)
+ */
+function initHeaderScroll() {
+    const header = document.querySelector('.site-header');
+    if (!header) return;
+
+    const checkScroll = () => {
+        if (window.scrollY > 50) {
+            header.classList.add('header-scrolled');
+        } else {
+            header.classList.remove('header-scrolled');
+        }
+    };
+
+    window.addEventListener('scroll', checkScroll);
+    checkScroll();
+}
+
+/**
+ * 2. ROLAGEM SUAVE INTEGRADA (Acessibilidade e UX)
+ */
+function initSmoothScroll() {
+    const links = document.querySelectorAll('.nav-links a:not(.btn-cta), .hero-botoes a');
+
+    links.forEach(link => {
+        link.addEventListener('click', (e) => {
+            const targetId = link.getAttribute('href');
+            
+            if (targetId.startsWith('#')) {
+                e.preventDefault();
+                const targetSection = document.querySelector(targetId);
+
+                if (targetSection) {
+                    const header = document.querySelector('.site-header');
+                    const headerHeight = header ? header.offsetHeight : 0;
+                    const targetPosition = targetSection.offsetTop - headerHeight;
+
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            }
+        });
+    });
+}
+
+/**
+ * 3. ANIMAÇÃO DE REVELAÇÃO (Scroll Reveal usando Intersection Observer API)
+ */
+function initScrollAnimation() {
+    const animElements = document.querySelectorAll('.card-pilar, .metodologia-conteudo, .metodologia-painel-img, .foto-card');
+
+    animElements.forEach(el => el.classList.add('reveal-hidden'));
+
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.15
+    };
+
+    const revealCallback = (entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('reveal-visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    };
+
+    const observer = new IntersectionObserver(revealCallback, observerOptions);
+    animElements.forEach(el => observer.observe(el));
+}
